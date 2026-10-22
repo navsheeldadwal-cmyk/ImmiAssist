@@ -1,0 +1,6 @@
+{
+  "name": "ImmiAssist",
+  "description": "A comprehensive, bilingual guide and AI assistant helping new immigrants in the Inland Empire and Southern California find vital resources for education, health, housing, and work permits.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
