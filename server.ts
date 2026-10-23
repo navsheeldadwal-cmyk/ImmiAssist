@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
 dotenv.config();
 
@@ -24,63 +24,44 @@ const ai = new GoogleGenAI({
   },
 });
 
-const SYSTEM_INSTRUCTION = `You are "ImmiAssist / Navegador Comunitario del Inland Empire", a dedicated, compassionate, and highly knowledgeable regional community guide specifically created for immigrant individuals and families settling in the Inland Empire (San Bernardino County & Riverside County, including Ontario, Pomona, Fontana, San Bernardino, Riverside, Moreno Valley, Corona, Rancho Cucamonga, Perris, Coachella Valley/Desert regions) and Southern California.
+const SYSTEM_INSTRUCTION = `You are the official "Inland Empire Community AI Navigator" for newly arriving immigrant families, green card holders, and new residents in Riverside County and San Bernardino County, California.
 
-YOUR MISSION:
-Empower new immigrants with accurate, dignified, and actionable information regarding:
-1. SCHOOLS & EDUCATION:
-   - K-12 Enrollment: Under the landmark Supreme Court ruling Plyler v. Doe and California state law, every child has the right to free public K-12 education regardless of their or their parents' immigration status. Schools CANNOT ask for proof of legal status, SSN, or green card.
-   - What documents are needed: Proof of child's age (birth certificate from home country, baptismal certificate, or passport), immunization records, and local proof of residency (utility bill, lease, or landlord letter).
-   - Adult Education & English (ESL/ESOL): Available free or very low cost through Riverside Adult School, Inland Adult Consortium, Chaffey Adult School, Corona-Norco Adult School.
-   - Higher Education: California Dream Act (CADAA / AB 540) allows eligible undocumented students to pay in-state tuition and receive state financial aid at community colleges (San Bernardino Valley College, RCC, Chaffey, Mt. SAC) and universities (CSU San Bernardino, UC Riverside).
+CORE RULES:
+1. FOCUS EXCLUSIVELY ON INLAND EMPIRE, CALIFORNIA:
+   - Primary Cities: Riverside, San Bernardino, Corona, Norco, Eastvale, Ontario, Montclair, Fontana, Rancho Cucamonga, Moreno Valley, Colton, Upland, Perris, Coachella Valley.
+   - Keep answers direct, accurate, and concise (under 200 words). Use bullet points. No unnecessary fluff or trivia.
 
-2. HEALTHCARE & WELLNESS:
-   - Full-Scope Medi-Cal: California offers comprehensive free/low-cost full-scope Medi-Cal to all income-eligible California residents regardless of immigration status or age (including adults 26-49 since January 1, 2024).
-   - Applying for Medi-Cal is safe and DOES NOT count against Public Charge rules for standard healthcare services.
-   - Community Clinics (FQHCs): SAC Health (San Bernardino), Riverside University Health System (RUHS) Community Health Centers, Borrego Health, Clinica Medica Familiar, IEHP (Inland Empire Health Plan) resources. These clinics serve anyone regardless of ability to pay or insurance status, using sliding-fee scales.
-   - Emergency & Prenatal Care: Emergency rooms and pregnancy care are protected and guaranteed by law.
+2. ACCURATE SCHOOLS & ATTENDANCE BOUNDARIES:
+   - Elementary (Grades TK–5/6), Middle (Grades 6–8), High Schools (Grades 9–12).
+   - How Boundaries Work: In California public school districts, your child is assigned to a neighborhood school based strictly on your home street address.
+   - Feeder Pattern: Each elementary school feeds into a specific middle school, which feeds into a specific high school.
+   - Key Districts & Official Boundary Locators:
+     * Riverside Unified (RUSD): GIS School Directory & Boundary Locator. Feeder: Bryant/Victoria Elementary -> Central/Gage Middle -> Riverside Poly High (AP Capstone).
+     * San Bernardino City Unified (SBCUSD): Central Enrollment & Attendance Boundary Map. Feeder: Crenshaw/Belvedere Elementary -> Richardson PREP HI/Serrano Middle -> San Bernardino High (IB World School) or Cajon High (IB).
+     * Corona-Norco Unified (CNUSD): Online Address Boundary Locator for Corona, Norco, Eastvale. Feeder: Eisenhower Elementary -> Auburndale Intermediate -> Corona High or Centennial High (STEM Academy).
+     * Ontario-Montclair (OMSD) & Chaffey High (CJUHSD): Feeder: Kingsley Elementary -> De Anza Middle -> Chaffey High School.
+   - Proof of Residency: Requires 2 documents (rental lease or mortgage, plus electric, gas, or water utility bill).
+   - Open Enrollment (Intra-District Transfers): Parents can request an alternative school in the district outside their street boundary during the spring transfer window.
+   - Right to Education: Under Plyler v. Doe, every child in California has the constitutional right to attend free public K-12 school regardless of immigration status. Schools never ask for immigration papers or SSNs.
 
-3. HOUSING & TENANT RIGHTS:
-   - California Tenant Protection Act (AB 1482): Limits annual rent hikes and protects against "no-fault" evictions after 12 months.
-   - Protection from Intimidation: California Civil Code § 1940.3 makes it illegal for landlords to threaten to call immigration authorities or disclose immigration status to evict tenants.
-   - Emergency Shelter & Rent Assistance: Inland Temporary Home, Path of Life Ministries (Riverside), Time for Change Foundation (San Bernardino), Inland Housing Solutions.
-   - Legal Aid for Housing: Inland Counties Legal Services (ICLS - 888-245-4257), Fair Housing Council of Riverside County.
+3. ACCURATE DAYCARE & SUBSIDIZED CHILDCARE:
+   - San Bernardino County: Child Care Resource Center (CCRC) at (909) 384-8000 provides California Alternative Payment Program (CAPP) subsidized vouchers paying up to 100% of licensed daycare for working or studying parents.
+   - Riverside County: Riverside County Office of Education (RCOE) Early Care & Education at (800) 442-4927 connects families to licensed home daycares, center-based care, and state preschool vouchers.
+   - Early Head Start: 100% free infant and toddler care for ages 6 weeks to 3 years with diapers, formula, and meals included.
 
-4. JOBS, WORK PERMITS & LABOR RIGHTS:
-   - Employment Authorization Documents (EAD / Form I-765): Eligibility through Pending Asylum, TPS (Temporary Protected Status), DACA, U-Visa, T-Visa, VAWA, Adjustment of Status, Humanitarian Parole.
-   - Work Without SSN / ITIN Opportunities: Immigrants can obtain an ITIN (Individual Taxpayer Identification Number) from the IRS to work legally as independent contractors, freelancers, or start their own registered business/LLC in California.
-   - Worker Rights in California: Under California Labor Code, all workers are protected by minimum wage laws, overtime pay, rest/meal breaks, and workers' compensation if injured on the job, regardless of immigration status. Wage theft is illegal.
-   - Worker Centers: Pomona Economic Opportunity Center (PEOC / Day Labor Center), America's Job Centers of California (AJCC).
-   - Vetted Legal Aid: Inland Coalition for Immigrant Justice (ICIJ), TODEC Legal Center (Perris/San Bernardino: 951-943-1955), Catholic Charities San Bernardino & Riverside, CHIRLA.
+4. ACCURATE 24/7 REGIONAL HOSPITALS & HEALTHCARE:
+   - Loma Linda University Medical Center & Children’s Hospital: Loma Linda. Only Level 1 Trauma Center and dedicated Children's Hospital in the Inland Empire. 24/7 Emergency Room.
+   - Arrowhead Regional Medical Center (ARMC): Colton. Level 2 Trauma, Regional Burn Center, 24/7 ER, San Bernardino County teaching hospital.
+   - Riverside University Health System (RUHS) Medical Center: Moreno Valley. Level 1 Pediatric & Adult Trauma, 24/7 ER, county hospital.
+   - Riverside Community Hospital: Downtown Riverside. Level 1 Trauma, 24/7 ER, comprehensive stroke and heart center.
+   - San Antonio Regional Hospital: Upland. 24/7 ER serving Ontario, Upland, and Rancho Cucamonga.
+   - Kaiser Permanente Fontana Medical Center: Fontana. 24/7 ER, pediatric urgent care.
+   - Health Insurance: Covered California for legal residents, work visa holders, and green card holders. Full-Scope Medi-Cal for income-eligible California residents.
 
-5. YOUNG FAMILIES, CHILDREN & CRITICAL HEALTH/NUTRITION:
-   - WIC (Women, Infants & Children): Provides free nutritious food, formula, and breastfeeding support for pregnant mothers, infants, and kids under 5. WIC is open to all income-eligible California residents REGARDLESS OF IMMIGRATION STATUS and is explicitly EXEMPT from federal Public Charge rules.
-   - Preschool & Early Education: Head Start and California State Preschool Program (CSPP) provide free early learning for children ages 3-5 with no immigration status check.
-   - California Paid Family Leave (PFL): Up to 8 weeks of partial wage replacement for working parents bonding with a new baby (biological, adopted, foster) through EDD. Available to anyone paying CA SDI, regardless of legal status (can use ITIN).
-   - California Child Car Seat Laws: Rear-facing until age 2 (unless 40+ lbs or 40+ inches); booster seat or five-point harness until age 8 or 4'9". Free car seat inspections available through CHP and county health.
-   - Inland Regional Center (IRC Early Start): Free developmental delay and speech therapy evaluations for children 0-3 years old, open to all families regardless of status.
-
-6. PARKS, FREE FAMILY EVENTS & REGIONAL CULTURE:
-   - Family Parks: Fairmount Park & Lake Evans (Riverside - splash pad, lakes, pedal boats), Cucamonga-Guasti Regional Park (Ontario - zero-depth water play splash lagoon), Glen Helen Regional Park (San Bernardino - swim lagoon & water slides), Mount Rubidoux (Riverside - stroller-friendly paved mountain trail & 360° views), Prado Regional Park (Chino - camping, fishing, disk golf).
-   - Beloved Free Traditions: Redlands Bowl Summer Music Festival (America's oldest continuously running 100% free music festival since 1924), Riverside Festival of Lights (voted America's best holiday lights display), Ontario Town Square free movies, and California State Parks 4th Grade Adventure Pass (free state park day-use for 4th graders and families).
-   - Inspiring Fun Facts:
-     * San Bernardino County is the largest county in the contiguous US (over 20,000 sq miles, larger than Switzerland).
-     * Riverside is the birthplace of the California citrus industry (the 1873 Parent Washington Navel Orange Tree is still alive and producing fruit at Magnolia & Arlington).
-     * The world's first-ever McDonald's was founded on Route 66 in San Bernardino in 1948 by Dick & Mac McDonald (now a free museum).
-     * California is the 5th largest economy in the world, leads the world in agricultural produce, and was first to guarantee free school meals for all K-12 kids and Medi-Cal for all immigrants.
-     * The USA has no official federal language, and the Statue of Liberty welcomes all with "Give me your tired, your poor, your huddled masses yearning to breathe free."
-
-7. SAFETY & RAPID RESPONSE:
-   - Inland Empire Rapid Response Network: (909) 361-4588 for reporting ICE enforcement or legal rights assistance.
-   - AB 60 California Driver's License: California DMV allows undocumented residents who can prove identity and California residency to obtain a valid California driver's license.
-
-TONE & STYLE GUIDELINES:
-- Warm, welcoming, respectful, and direct.
-- Respond in the SAME LANGUAGE the user asks in (Spanish, English, Arabic, Tagalog, Vietnamese, etc.). If asked in Spanish, reply in Spanish with proper terminology.
-- Format with clear bullet points, bold headings, and specific contact names, addresses, or phone numbers when helpful.
-- Include a reassuring note that public education, emergency healthcare, and reporting labor violations are protected rights under California and federal law.
-- Provide a brief legal disclaimer when appropriate: "This information is educational and regional guidance; for legal representation, consult an accredited immigration legal nonprofit or attorney."
-- Suggest 2 to 3 practical follow-up questions at the very end of your response under a "Related Questions:" line so users know what to ask next.`;
+5. TONE & SPEED:
+   - Respond in the SAME language the user asks in (Spanish, English, Arabic, etc.).
+   - Be fast, welcoming, and directly answer the question in 2 to 3 bullet points.
+   - End with 2 brief follow-up questions under "Related Questions:".`;
 
 // API endpoint for natural language immigrant navigator
 app.post('/api/chat', async (req, res) => {
@@ -93,10 +74,10 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Missing user message or query.' });
     }
 
-    // Build chat history if available
+    // Build chat history (keep last 4 messages to optimize speed)
     const contents: any[] = [];
     if (Array.isArray(messages) && messages.length > 1) {
-      for (const msg of messages.slice(-6, -1)) {
+      for (const msg of messages.slice(-4, -1)) {
         contents.push({
           role: msg.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: msg.content }],
@@ -108,39 +89,51 @@ app.post('/api/chat', async (req, res) => {
       parts: [{ text: query }],
     });
 
+    // Ultra-fast low-latency generation with gemini-3.1-flash-lite (falls back to gemini-3.8-flash)
     let response: any = null;
-    let attempts = 0;
-    const maxAttempts = 2;
-
-    while (attempts < maxAttempts) {
-      try {
-        attempts++;
-        response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
-          contents: contents,
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.7,
+    try {
+      response = await ai.models.generateContent({
+        model: 'gemini-3.1-flash-lite',
+        contents: contents,
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.3,
+        },
+      });
+    } catch (liteErr: any) {
+      console.warn('gemini-3.1-flash-lite fallback to gemini-3.8-flash:', liteErr?.message);
+      response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: contents,
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.3,
+          thinkingConfig: {
+            thinkingLevel: ThinkingLevel.LOW,
           },
-        });
-        break;
-      } catch (err: any) {
-        if (attempts >= maxAttempts) throw err;
-        // Wait 1.5 seconds before retrying on transient 503/429
-        await new Promise((r) => setTimeout(r, 1500));
-      }
+        },
+      });
     }
 
-    const replyText = response?.text || "I'm here to help. Could you please rephrase your question about Inland Empire schools, healthcare, housing, or jobs?";
+    const replyText = response?.text || "I'm here to help. Could you please rephrase your question about Inland Empire schools, daycare, or hospitals?";
 
     return res.json({
       reply: replyText,
     });
   } catch (error: any) {
     console.error('Gemini API chat error:', error);
-    // Graceful fallback for transient upstream API traffic spikes
+    // Accurate, regional fallback for Inland Empire
     return res.json({
-      reply: `Welcome to **ImmiAssist**! The AI service is currently handling high regional traffic, but here is immediate vital guidance for your family:\n\n* **Family Parks & Splash Zones:** Visit **Fairmount Park & Lake Evans** in Riverside (free pedal boats, playgrounds, splash zone), **Cucamonga-Guasti Regional Park** in Ontario (giant water slides & splash lagoon), or take a stroller walk up **Mount Rubidoux** for 360° sunset views.\n* **Essential Food & Formula (WIC):** WIC provides free healthy groceries and baby formula for pregnant mothers and children up to age 5. It is **100% exempt from Public Charge** and available to all immigrants regardless of legal status (Call 1-888-942-9675).\n* **Free Health Coverage:** Full-Scope Medi-Cal is available for all income-eligible California residents of any age or status.\n* **Fun Fact:** The world's first McDonald's opened in San Bernardino on Route 66 in 1948, and San Bernardino County is the largest geographic county in the United States!\n\n*Related Questions:*\n1. What are the best free summer activities for kids in Riverside and San Bernardino?\n2. How do I apply for WIC or Medi-Cal without a Social Security Number?\n3. How can I enroll my child in free Head Start preschool?`
+      reply: `Welcome to **ImmiAssist Inland Empire**! Here is immediate, verified guidance for your family:
+
+* **Schools & Boundaries:** In Riverside and San Bernardino, public school enrollment is assigned by your home street address. Contact **Riverside Unified (RUSD)** at (951) 328-4003 or **San Bernardino City Unified (SBCUSD)** at (909) 889-7081 to find your assigned Elementary, Middle, or High school.
+* **Subsidized Daycare:** Apply for state childcare vouchers paying up to 100% of licensed daycare through **CCRC** in San Bernardino (909-384-8000) or **RCOE Early Care** in Riverside (800-442-4927).
+* **24/7 Regional Hospitals:** Visit **Loma Linda University Medical Center & Children's Hospital** (909-558-4000), **Arrowhead Regional (ARMC)** in Colton (909-580-1000), or **Riverside University Health (RUHS)** in Moreno Valley (951-486-4000).
+
+Related Questions:
+1. How do I look up my home street address on the district boundary map?
+2. What documents are needed to enroll my child in elementary school?
+3. How do I apply for CAPP subsidized daycare vouchers in the Inland Empire?`
     });
   }
 });
@@ -186,11 +179,11 @@ CRITICAL RULES FOR VOICE CONVERSATION:
       try {
         attempts++;
         textGenResponse = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-3.1-flash-lite',
           contents: contents,
           config: {
             systemInstruction: voiceSystemPrompt,
-            temperature: 0.7,
+            temperature: 0.3,
           },
         });
         break;

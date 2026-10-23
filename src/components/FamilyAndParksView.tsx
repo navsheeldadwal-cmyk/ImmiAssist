@@ -27,9 +27,9 @@ import {
   FUN_FACTS_DATA,
   ParkItem,
   FamilyEventItem,
-  CriticalFamilyInfo,
-  FunFactItem
+  CriticalFamilyInfo
 } from '../data/familyAndParks';
+import { FunFactSheetView } from './FunFactSheetView';
 
 interface FamilyAndParksViewProps {
   onAskAi: (promptText: string) => void;
@@ -40,9 +40,7 @@ type SubTab = 'parks' | 'events' | 'family-programs' | 'fun-facts';
 
 export const FamilyAndParksView: React.FC<FamilyAndParksViewProps> = ({ onAskAi, lang }) => {
   const [activeTab, setActiveTab] = useState<SubTab>('parks');
-  const [funFactRegion, setFunFactRegion] = useState<'All' | 'Inland Empire' | 'SoCal' | 'California' | 'United States'>('All');
   const [parkWaterFilter, setParkWaterFilter] = useState<boolean>(false);
-  const [expandedFactId, setExpandedFactId] = useState<string | null>(null);
 
   const subTabs = [
     {
@@ -68,19 +66,12 @@ export const FamilyAndParksView: React.FC<FamilyAndParksViewProps> = ({ onAskAi,
     },
     {
       id: 'fun-facts' as SubTab,
-      labelEn: 'Fun Facts: IE, SoCal & USA',
-      labelEs: 'Datos Curiosos: IE, CA y EE.UU.',
+      labelEn: 'Fun Fact Sheet',
+      labelEs: 'Hoja de Curiosidades',
       icon: Lightbulb,
       count: FUN_FACTS_DATA.length
     }
   ];
-
-  const filteredFacts = FUN_FACTS_DATA.filter((fact) => {
-    if (funFactRegion !== 'All' && fact.region !== funFactRegion) {
-      return false;
-    }
-    return true;
-  });
 
   const filteredParks = PARKS_AND_OUTDOORS.filter((park) => {
     if (parkWaterFilter && !park.hasWaterPlay) {
@@ -433,93 +424,7 @@ export const FamilyAndParksView: React.FC<FamilyAndParksViewProps> = ({ onAskAi,
 
       {/* --- TAB 4: FUN FACTS TRIVIA HUB --- */}
       {activeTab === 'fun-facts' && (
-        <section className="space-y-6">
-          <div className="text-center max-w-2xl mx-auto">
-            <h3 className="text-xl font-bold text-slate-900">
-              {lang === 'en' ? 'Discover Your New Home & Heritage' : 'Descubra la Historia de Su Nuevo Hogar'}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              {lang === 'en'
-                ? 'Fascinating trivia and inspiring facts about the Inland Empire, Southern California, the Golden State, and the United States.'
-                : 'Datos curiosos e inspiradores sobre el Inland Empire, el Sur de California, el Estado Dorado y los Estados Unidos.'}
-            </p>
-          </div>
-
-          {/* Region Filter Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {(['All', 'Inland Empire', 'SoCal', 'California', 'United States'] as const).map(
-              (reg) => (
-                <button
-                  key={reg}
-                  onClick={() => setFunFactRegion(reg)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    funFactRegion === reg
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  {reg === 'All'
-                    ? lang === 'en'
-                      ? 'All Facts'
-                      : 'Todos'
-                    : reg}
-                </button>
-              )
-            )}
-          </div>
-
-          {/* Facts Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {filteredFacts.map((item) => {
-              const isExpanded = expandedFactId === item.id;
-              return (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
-                        {item.region}
-                      </span>
-                    </div>
-
-                    <h4 className="text-base sm:text-lg font-bold text-slate-900 mb-2 leading-snug">
-                      {item.title}
-                    </h4>
-
-                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3">
-                      {item.fact}
-                    </p>
-
-                    {/* Did You Know Accordion */}
-                    <div className="bg-amber-50/70 border border-amber-200/70 rounded-xl p-3 text-xs">
-                      <strong className="block font-bold text-amber-950 mb-1 flex items-center gap-1">
-                        <Lightbulb className="w-3.5 h-3.5 text-amber-600" />
-                        {lang === 'en' ? 'Did You Know?' : '¿Sabía Usted?'}
-                      </strong>
-                      <p className="text-slate-700 leading-relaxed">{item.didYouKnow}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex justify-end">
-                    <button
-                      onClick={() =>
-                        onAskAi(
-                          `Tell me more fun historical facts and stories about: ${item.title} in ${item.region}.`
-                        )
-                      }
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-950 cursor-pointer"
-                    >
-                      <Sparkles className="w-3 h-3 text-amber-600" />
-                      <span>{lang === 'en' ? 'Ask AI to expand on this' : 'Saber más con la IA'}</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <FunFactSheetView onAskAi={onAskAi} lang={lang} />
       )}
     </div>
   );

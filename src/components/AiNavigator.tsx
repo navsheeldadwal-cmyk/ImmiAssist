@@ -30,22 +30,22 @@ export const AiNavigator: React.FC<AiNavigatorProps> = ({ initialPrompt, lang })
       role: 'assistant',
       content:
         lang === 'en'
-          ? `Welcome to the ImmiAssist Newcomer Navigator.\n\nYou can **type your questions or tap the microphone to speak aloud** in your preferred language (English, Spanish, Arabic, Tagalog, Vietnamese, etc.).\n\nI specialize in **free public school enrollment** and **healthcare clinics/Medi-Cal** across Riverside and San Bernardino counties. How can I assist you today?`
-          : `Bienvenido al Navegador para Recién Llegados de ImmiAssist.\n\nPuede **escribir sus preguntas o tocar el micrófono para hablar en voz alta** en su idioma preferido (español, inglés, etc.).\n\nMe especializo en **inscripción escolar gratuita** y **clínicas de salud/Medi-Cal** en Riverside y San Bernardino. ¿Cómo puedo orientarle hoy?`,
+          ? `Welcome to the ImmiAssist Newcomer Navigator.\n\nYou can **type your questions or tap the microphone to speak aloud** in your preferred language (English, Spanish, Arabic, Tagalog, Vietnamese, etc.).\n\nI specialize in **public school enrollment**, **regional hospitals and health insurance**, and **community integration** across Riverside and San Bernardino counties. How can I assist you and your family today?`
+          : `Bienvenido al Navegador para Recién Llegados de ImmiAssist.\n\nPuede **escribir sus preguntas o tocar el micrófono para hablar en voz alta** en su idioma preferido (español, inglés, etc.).\n\nMe especializo en **inscripción escolar**, **hospitales regionales y seguros de salud**, e **integración comunitaria** en Riverside y San Bernardino. ¿Cómo puedo orientarle a usted y a su familia hoy?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       suggestedFollowUps:
         lang === 'en'
           ? [
-              'Can my children attend school without an SSN or legal status?',
-              'How do I apply for free Full-Scope Medi-Cal in California?',
-              'Where is the nearest community health clinic in the Inland Empire?',
-              'Can immigrant families receive WIC food support safely?'
+              'How do school boundaries and feeder patterns work in Riverside and San Bernardino?',
+              'How do I apply for CAPP subsidized daycare vouchers (CCRC & RCOE)?',
+              'What are the 24/7 Level 1 and 2 trauma hospitals in the Inland Empire?',
+              'What documents are required to enroll in public elementary school under California law?'
             ]
           : [
-              '¿Pueden mis hijos ir a la escuela sin SSN o documentos?',
-              '¿Cómo solicito Medi-Cal Completo gratuito en California?',
-              '¿Dónde encuentro una clínica comunitaria en el Inland Empire?',
-              '¿Las familias inmigrantes pueden recibir WIC de forma segura?'
+              '¿Cómo funcionan los límites escolares y la secuencia en Riverside y San Bernardino?',
+              '¿Cómo solicito subsidios de guardería CAPP con CCRC o RCOE?',
+              '¿Cuáles son los hospitales de trauma 24/7 en el Inland Empire?',
+              '¿Qué documentos se requieren para inscribir a un niño en la escuela primaria pública?'
             ]
     }
   ]);
@@ -54,7 +54,7 @@ export const AiNavigator: React.FC<AiNavigatorProps> = ({ initialPrompt, lang })
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isListening, setIsListening] = useState(false);
-  const [voiceAutoRead, setVoiceAutoRead] = useState(true);
+  const [voiceAutoRead, setVoiceAutoRead] = useState(false);
   const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
   const [isHandsFreeCallMode, setIsHandsFreeCallMode] = useState(false);
 
@@ -612,13 +612,51 @@ export const AiNavigator: React.FC<AiNavigatorProps> = ({ initialPrompt, lang })
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quick Inland Empire Action Chips */}
+      <div className="mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
+        <span className="text-slate-400 font-medium shrink-0 text-[11px]">
+          {lang === 'en' ? 'Quick Ask:' : 'Consultas rápidas:'}
+        </span>
+        {[
+          {
+            textEn: 'School Boundaries in IE',
+            textEs: 'Límites Escolares',
+            query: lang === 'en' ? 'How do public school boundaries and feeder patterns work in Riverside and San Bernardino counties?' : '¿Cómo funcionan los límites escolares y la secuencia en Riverside y San Bernardino?'
+          },
+          {
+            textEn: 'Daycare Vouchers (CCRC & RCOE)',
+            textEs: 'Vales de Guardería',
+            query: lang === 'en' ? 'How do I apply for CAPP subsidized daycare vouchers in San Bernardino and Riverside counties?' : '¿Cómo solicito vales de guardería CAPP en San Bernardino y Riverside?'
+          },
+          {
+            textEn: '24/7 Regional Hospitals',
+            textEs: 'Hospitales de Trauma 24/7',
+            query: lang === 'en' ? 'What are the top 24/7 emergency trauma hospitals in the Inland Empire?' : '¿Cuáles son los hospitales de emergencia 24/7 principales en el Inland Empire?'
+          },
+          {
+            textEn: 'Elementary School Registration Docs',
+            textEs: 'Requisitos de Primaria',
+            query: lang === 'en' ? 'What documents do I need to register my child in public elementary school in California?' : '¿Qué documentos necesito para inscribir a mi hijo en la primaria en California?'
+          }
+        ].map((chip, cIdx) => (
+          <button
+            key={cIdx}
+            type="button"
+            onClick={() => handleSendMessage(chip.query, false)}
+            className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer shrink-0 border border-slate-200"
+          >
+            {lang === 'en' ? chip.textEn : chip.textEs}
+          </button>
+        ))}
+      </div>
+
       {/* Unified Voice & Text Input Bar */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();
         }}
-        className="mt-4"
+        className="mt-2"
       >
         <div
           className={`flex items-center rounded-2xl bg-white border shadow-xs transition-all p-1.5 ${

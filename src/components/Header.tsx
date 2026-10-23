@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, ShieldAlert, Bookmark, PhoneCall, ExternalLink, ShieldCheck } from 'lucide-react';
+import { Compass, Bookmark, ShieldCheck, HeartHandshake, ShieldAlert } from 'lucide-react';
 
 interface HeaderProps {
   currentTab: string;
@@ -25,50 +25,41 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const navItems = [
-    { id: 'directory', labelEn: 'Schools & Health', labelEs: 'Escuelas y Salud' },
+    { id: 'directory', labelEn: 'Home & Directory', labelEs: 'Inicio y Directorio' },
+    { id: 'fun-facts', labelEn: 'IE Fun Fact Sheet', labelEs: 'Hoja de Curiosidades' },
     { id: 'family-parks', labelEn: 'Parks & Family', labelEs: 'Parques y Familia' },
-    { id: 'ai-assistant', labelEn: 'Ask Navigator', labelEs: 'Preguntar a la IA' },
-    { id: 'roadmap', labelEn: 'Checklist', labelEs: 'Guía Inicial' },
-    { id: 'rights', labelEn: 'Your Rights', labelEs: 'Sus Derechos' },
+    { id: 'ai-assistant', labelEn: 'Ask Navigator (AI)', labelEs: 'Asistente IA' },
+    { id: 'roadmap', labelEn: '30-60-90 Days Plan', labelEs: 'Guía 30-60-90 Días' },
+    { id: 'refugee-legal', labelEn: 'Specialized Legal & Refugee Aid', labelEs: 'Ayuda Legal y Refugiados' },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      {/* Top Essential Hotline Bar */}
-      <div className="bg-slate-900 text-slate-200 text-xs px-4 sm:px-6 py-1.5 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span className="font-medium text-[11px] sm:text-xs">
-              {lang === 'en' ? 'Inland Empire, Southern California' : 'Inland Empire, Sur de California'}
-            </span>
-          </div>
-          <span className="hidden md:inline text-slate-600">|</span>
-          <span className="hidden md:inline text-[11px] text-slate-400">
-            {lang === 'en' ? 'Confidential & Safe for all immigrants' : 'Confidencial y seguro para toda la comunidad'}
+      {/* Clean, Non-Intrusive Sub-bar for Region & Community Tone (No emergency crisis alarm) */}
+      <div className="bg-slate-900 text-slate-300 text-xs px-4 sm:px-6 py-1.5 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span className="font-medium text-[11px] sm:text-xs text-slate-200">
+            {lang === 'en'
+              ? 'Inland Empire, Southern California • Official Community Resource Guide'
+              : 'Inland Empire, Sur de California • Guía Oficial de Recursos Comunitarios'}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 text-xs">
-          <a
-            href="tel:9093614588"
-            className="hidden sm:inline-flex items-center gap-1 text-amber-300 hover:text-amber-200 font-semibold"
-          >
-            <PhoneCall className="w-3 h-3" />
-            <span>24/7 Helpline: (909) 361-4588</span>
-          </a>
+        <div className="flex items-center gap-4 text-xs">
           <button
             onClick={openAboutModal}
-            className="text-slate-400 hover:text-white transition-colors cursor-pointer text-[11px]"
+            className="text-slate-300 hover:text-white transition-colors cursor-pointer text-[11px]"
           >
-            {lang === 'en' ? 'About' : 'Acerca de'}
+            {lang === 'en' ? 'About ImmiAssist' : 'Acerca de ImmiAssist'}
           </button>
+          <span className="text-slate-600">|</span>
           <button
             onClick={handleEmergencyExit}
-            title={lang === 'en' ? 'Quickly close this site for privacy' : 'Salida rápida por privacidad'}
-            className="inline-flex items-center gap-1 text-[11px] text-red-300 hover:text-white bg-red-950/80 hover:bg-red-900 border border-red-800/80 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+            title={lang === 'en' ? 'Quickly close this site' : 'Salida rápida de privacidad'}
+            className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors cursor-pointer"
           >
-            <ShieldAlert className="w-3 h-3 text-red-400" />
+            <ShieldAlert className="w-3 h-3 text-slate-400" />
             <span>{lang === 'en' ? 'Quick Exit' : 'Salida Rápida'}</span>
           </button>
         </div>
@@ -87,28 +78,28 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-lg sm:text-xl text-slate-900 tracking-tight">
+                <span className="font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight">
                   ImmiAssist
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">
-                  IE Guide
+                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-900">
+                  Newcomer Guide
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium">
-                {lang === 'en' ? 'Inland Empire Newcomer Hub' : 'Guía Comunitaria del Inland Empire'}
+                {lang === 'en' ? 'Inland Empire Legal Immigrant & Family Hub' : 'Guía de Familias y Recién Llegados del IE'}
               </p>
             </div>
           </div>
 
-          {/* Nav Items (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200">
+          {/* Desktop Nav Items */}
+          <nav className="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200">
             {navItems.map((item) => {
               const isActive = currentTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setCurrentTab(item.id)}
-                  className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                     isActive
                       ? 'bg-white text-slate-900 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -150,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Bookmark className="w-4 h-4 text-slate-600" />
               {savedCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {savedCount}
                 </span>
               )}
@@ -162,12 +153,12 @@ export const Header: React.FC<HeaderProps> = ({
               className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-xs"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span>{lang === 'en' ? 'Ask AI (Voice & Text)' : 'Preguntar a la IA'}</span>
+              <span>{lang === 'en' ? 'Ask AI Navigator' : 'Preguntar a la IA'}</span>
             </button>
           </div>
         </div>
 
-        {/* Mobile Submenu Tabs */}
+        {/* Mobile Navigation Tabs */}
         <div className="flex lg:hidden overflow-x-auto py-2 border-t border-slate-100 gap-1 no-scrollbar">
           {navItems.map((item) => {
             const isActive = currentTab === item.id;

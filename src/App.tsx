@@ -6,6 +6,8 @@ import { AiNavigator } from './components/AiNavigator';
 import { RoadmapView } from './components/RoadmapView';
 import { KnowYourRights } from './components/KnowYourRights';
 import { FamilyAndParksView } from './components/FamilyAndParksView';
+import { FunFactSheetView } from './components/FunFactSheetView';
+import { RefugeeAndLegalView } from './components/RefugeeAndLegalView';
 import { SavedResourcesModal } from './components/SavedResourcesModal';
 import { AboutModal } from './components/AboutModal';
 import { Footer } from './components/Footer';
@@ -71,9 +73,14 @@ export default function App() {
   const handleAskAboutResource = (resourceName: string) => {
     const question =
       lang === 'en'
-        ? `What services does ${resourceName} provide for immigrant families in the Inland Empire, and what documents should I bring?`
-        : `¿Qué servicios ofrece ${resourceName} para familias inmigrantes en el Inland Empire y qué documentos debo llevar?`;
+        ? `What services does ${resourceName} provide for families in the Inland Empire, and what documents should I bring?`
+        : `¿Qué servicios ofrece ${resourceName} para familias en el Inland Empire y qué documentos debo llevar?`;
     handleAskAiFromAnywhere(question);
+  };
+
+  const handleNavigateTab = (tab: string) => {
+    setCurrentTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -81,7 +88,7 @@ export default function App() {
       {/* Header */}
       <Header
         currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
+        setCurrentTab={handleNavigateTab}
         savedCount={savedIds.length}
         openSavedModal={() => setIsSavedModalOpen(true)}
         openAboutModal={() => setIsAboutModalOpen(true)}
@@ -99,9 +106,11 @@ export default function App() {
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
               onAskAiPrompt={handleAskAiFromAnywhere}
-              openAiAssistant={() => setCurrentTab('ai-assistant')}
+              openAiAssistant={() => handleNavigateTab('ai-assistant')}
               lang={lang}
-              onNavigateToParks={() => setCurrentTab('family-parks')}
+              onNavigateToParks={() => handleNavigateTab('family-parks')}
+              onNavigateToFunFacts={() => handleNavigateTab('fun-facts')}
+              onNavigateToRefugeeLegal={() => handleNavigateTab('refugee-legal')}
             />
             <ResourceDirectory
               searchQuery={searchQuery}
@@ -114,6 +123,10 @@ export default function App() {
               lang={lang}
             />
           </>
+        )}
+
+        {currentTab === 'fun-facts' && (
+          <FunFactSheetView onAskAi={handleAskAiFromAnywhere} lang={lang} />
         )}
 
         {currentTab === 'ai-assistant' && (
@@ -129,27 +142,32 @@ export default function App() {
         )}
 
         {currentTab === 'rights' && <KnowYourRights lang={lang} />}
+
+        {currentTab === 'refugee-legal' && (
+          <RefugeeAndLegalView onAskAi={handleAskAiFromAnywhere} lang={lang} />
+        )}
       </main>
 
       {/* Floating Unified Voice & Text Button */}
       {currentTab !== 'ai-assistant' && (
         <aside aria-label="Unified AI Assistant" className="fixed bottom-6 right-6 z-30">
           <button
-            onClick={() => setCurrentTab('ai-assistant')}
+            type="button"
+            onClick={() => handleNavigateTab('ai-assistant')}
             className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer border border-slate-700"
           >
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               <Mic className="w-4 h-4 text-amber-400" />
             </div>
-            <span>{lang === 'en' ? 'Ask AI (Voice & Text)' : 'Asistente IA (Voz y Texto)'}</span>
+            <span>{lang === 'en' ? 'Ask AI Navigator' : 'Asistente IA (Voz y Texto)'}</span>
           </button>
         </aside>
       )}
 
       {/* Footer */}
       <Footer
-        setCurrentTab={setCurrentTab}
+        setCurrentTab={handleNavigateTab}
         openAboutModal={() => setIsAboutModalOpen(true)}
         lang={lang}
       />

@@ -48,15 +48,15 @@ export const AboutModal: React.FC<AboutModalProps> = ({
 
         {/* Mission Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4">
-            <div className="flex items-center gap-2 text-amber-900 font-bold text-sm mb-1.5">
-              <Users className="w-4 h-4 text-amber-700" />
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-sm mb-1.5">
+              <Users className="w-4 h-4 text-blue-600" />
               <span>{lang === 'en' ? 'Our Mission' : 'Nuestra Misión'}</span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
               {lang === 'en'
-                ? 'ImmiAssist bridges the information gap for over 350,000 immigrant community members in the Inland Empire. We empower families with transparent, accessible, and verified information about schools, healthcare, tenant defense, and work permits.'
-                : 'ImmiAssist elimina las barreras de información para más de 350,000 inmigrantes en el Inland Empire. Brindamos información transparente y verificada sobre escuelas, salud, vivienda y permisos de trabajo.'}
+                ? 'ImmiAssist serves as the trusted regional onboarding guide for new legal immigrant families, lawful permanent residents (green card holders), work visa arrivals, and international students settling across Riverside and San Bernardino counties. We provide direct access to verified public school registration, regional hospital networks, and community integration.'
+                : 'ImmiAssist es la guía regional de integración para familias inmigrantes, residentes permanentes, titulares de visas y recién llegados a los condados de Riverside y San Bernardino. Brindamos acceso directo a inscripción escolar verificada, hospitales regionales e integración comunitaria.'}
             </p>
           </div>
 
